@@ -41,17 +41,15 @@ try {
   app.use('/api/projects', projectRoutes);
   app.use('/api/contact', contactRoutes);
 } catch (error) {
-  console.log('Routes not loaded, serving static files only');
+  console.log('❌ Routes not loaded:', error);
 }
 
-// Routes are now handled in the try-catch block above
-
-// Serve the main HTML file for all routes (for SPA)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+// ✅ Remove the SPA static file serving
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// });
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
