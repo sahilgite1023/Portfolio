@@ -1,50 +1,50 @@
+
 const express = require('express');
-// Commenting out mongoose since we're not using MongoDB for now
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose'); // ✅ uncomment to use MongoDB
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const path = require('path');
 try {
   require('dotenv').config();
 } catch (error) {
-  console.log('No .env file found or dotenv not installed, using default settings');
+  console.log('No .env file found, using default settings');
 }
 
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// ✅ Configure CORS for your frontend (Netlify)
+const corsOptions = {
+  origin: "https://your-frontend.netlify.app", // replace with your Netlify URL
+  credentials: true
+};
+app.use(cors(corsOptions));
+
 // Middleware
-app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// MongoDB Connection (commented out until MongoDB is set up)
-/*
-mongoose.connect(process.env.MONGODB_URI, {
+// ✅ MongoDB Connection
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('MongoDB connected successfully'))
-.catch(err => console.log('MongoDB connection error:', err));
-*/
+.then(() => console.log('✅ MongoDB connected successfully'))
+.catch(err => console.log('❌ MongoDB connection error:', err));
 
-// Import routes
+// Import API routes
 try {
   const projectRoutes = require('./src/routes/projectRoutes');
   const contactRoutes = require('./src/routes/contactRoutes');
   
-  // Use routes
   app.use('/api/projects', projectRoutes);
   app.use('/api/contact', contactRoutes);
 } catch (error) {
   console.log('❌ Routes not loaded:', error);
 }
 
-// ✅ Remove the SPA static file serving
+// ✅ Remove static frontend serving (frontend will be on Netlify)
+// app.use(express.static(path.join(__dirname, 'public')));
 // app.get('*', (req, res) => {
 //   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 // });
